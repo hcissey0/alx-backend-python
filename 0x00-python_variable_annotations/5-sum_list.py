@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """This is a function that sums up list of floats"""
+from typing import List
 
 
-def sum_list(input_list: list[float]) -> float:
+def sum_list(input_list: List[float]) -> float:
     """Sums up a list of floats
 
     Args:
@@ -11,4 +12,4 @@ def sum_list(input_list: list[float]) -> float:
     Returns:
         float: The sum
     """
-    return float(sum(input_list))
+    return sum(input_list)
