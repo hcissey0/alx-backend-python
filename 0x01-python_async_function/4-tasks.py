@@ -17,4 +17,3 @@ async def task_wait_n(n, max_delay):
         for task in done:
             delays.append(task.result())
     return delays
-
