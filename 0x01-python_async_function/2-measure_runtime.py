@@ -11,6 +11,6 @@ def measure_time(n: int, max_delay: int) -> float:
     """This is used to measure thr run tikme"""
     st_time = time()
     asyncio.run(wait_n(n, max_delay))
-    end_time = - time()
+    end_time = time()
     total_time = end_time - st_time
     return total_time / n
