@@ -61,7 +61,7 @@ class TestGetJson(unittest.TestCase):
 
     @mock.patch('utils.requests.get')
     def test_get_json(self,
-                      mock_requests_get: Callable) -> None:
+                      mock_requests_get: Any) -> None:
         """The test for the get json
 
         Args:
