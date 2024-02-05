@@ -61,7 +61,7 @@ class TestGetJson(unittest.TestCase):
 
     @mock.patch('utils.requests.get')
     def test_get_json(self,
-                      mock_requests_get: Callable) -> None:
+                      mock_requests_get: mock._patch) -> None:
         """The test for the get json
 
         Args:
@@ -81,5 +81,6 @@ class TestGetJson(unittest.TestCase):
             result = get_json(test_url)
 
             mock_requests_get.assert_called_once_with(test_url)
+            mock_requests_get.call_count = 0
 
             self.assertEqual(result, test_payload)
