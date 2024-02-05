@@ -2,9 +2,10 @@
 """This is the utils test file"""
 
 from parameterized import parameterized
-from typing import Mapping, Sequence, Any
+from typing import Mapping, Sequence, Any, Callable
 import unittest
-from utils import access_nested_map
+from unittest import mock
+from utils import access_nested_map, get_json
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -35,7 +36,8 @@ class TestAccessNestedMap(unittest.TestCase):
         ({"a": 1}, ('a', 'b'), "KeyError: 'b'")
     ])
     def test_access_nested_map_exception(self, nested_map: Mapping,
-                                         path: Sequence, expected_message: Any) -> None:
+                                         path: Sequence,
+                                         expected_message: Any) -> None:
         """This is another test case for the access_nested_map function
 
         Args:
@@ -48,3 +50,39 @@ class TestAccessNestedMap(unittest.TestCase):
             for k in path:
                 c_map = nested_map[k]
             self.assertEqual(str(cont.exception), expected_message)
+
+
+class TestGetJson(unittest.TestCase):
+    """This the test cases for the get_json function
+
+    Args:
+        unittest.TestCase (class): The unittest class
+    """
+
+    @mock.patch('utils.requests.get')
+    def test_get_json(self,
+                      mock_requests_get: Callable) -> None:
+        """The test for the get json
+
+        Args:
+            mock_json_loads (Callable): The mock json.loads()
+            mock_requests_get (Callable): The mock requests.get()
+        """
+        test_input = [
+            ("http://example.com", {"payload": True}),
+            ("http://holberton.io", {"payload": False})
+        ]
+
+
+        for test_url, test_payload in test_input:
+            mock_response = mock.Mock()
+            mock_response.json.return_value = test_payload
+            mock_requests_get.return_value = mock_response
+
+
+            result = get_json(test_url)
+
+            mock_requests_get.assert_called_once_with(test_url)
+            mock_requests_get.call_count = 0
+
+            self.assertEqual(result, test_payload)
