@@ -60,8 +60,7 @@ class TestGetJson(unittest.TestCase):
     """
 
     @mock.patch('utils.requests.get')
-    def test_get_json(self,
-                      mock_requests_get: Any) -> None:
+    def test_get_json(self, mock_requests_get: Any) -> None:
         """The test for the get json
 
         Args:
@@ -84,3 +83,16 @@ class TestGetJson(unittest.TestCase):
             mock_requests_get.call_count = 0
 
             self.assertEqual(result, test_payload)
+
+
+class TestMemoize(unittest.TestCase):
+    """This is the memoize class' test cases
+
+    Args:
+        unittest.TestCase (class): This is the test case class
+    """
+
+    def test_memoize(self):
+        """This is the memoize test function
+        """
+        pass
