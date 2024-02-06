@@ -50,9 +50,10 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_public_repos_url (mock.Mock): The _public_repos_url mock
             mock_get_json (mock.Mock): The get_json mock
         """
-        with mock.patch.object(GithubOrgClient, '_public_repos_url', new_callable=mock.PropertyMock) as mock_public_repos_url:
-
-            mock_public_repos_url.return_value = 'https://api.github.com/orgs/org_name/repos'
+        with mock.patch.object(GithubOrgClient,
+                               '_public_repos_url',
+                               new_callable=mock.PropertyMock,
+                               return_value="https://api.github.com/orgs/org_name/repos") as mock_public_repos_url:
 
             test_class = GithubOrgClient('org_name')
             self.assertEqual(test_class.public_repos(), ['r1', 'r2'])
