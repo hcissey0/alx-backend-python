@@ -83,7 +83,11 @@ class TestMemoize(unittest.TestCase):
         unittest.TestCase (class): This is the test case class
     """
 
-    def test_memoize(self):
+    @parameterized.expand([
+        (42,)
+    ])
+    @mock.patch('TestClass.a_method')
+    def test_memoize(self, return_value, mock_a_method):
         """This is the memoize test function
         """
 
@@ -100,16 +104,14 @@ class TestMemoize(unittest.TestCase):
             def a_property(self):
                 return self.a_method()
 
-        with mock.patch.object(TestClass, 'a_method', return_value=42) as mock_method:
-            obj = TestClass()
+        mock_a_method.return_value = return_value
+        test_class = TestClass()
+        res1 = test_class.a_property
+        res2 = test_class.a_property
 
-            res1 = obj.a_property
-            res2 = obj.a_property
-
-            self.assertEqual(res1, 42)
-            self.assertEqual(res2, 42)
-
-            mock_method.assert_called_once()
+        self.assertEqual(res1, return_value)
+        self.assertEqual(res2, return_value)
+        mock_a_method.assert_called_once()
 
 
 if __name__ == "__main__":
