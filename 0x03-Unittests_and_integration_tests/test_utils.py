@@ -5,7 +5,7 @@ from parameterized import parameterized
 from typing import Mapping, Sequence, Any, Callable
 import unittest
 from unittest import mock
-from utils import access_nested_map, get_json
+from utils import access_nested_map, get_json, memoize
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -82,29 +82,40 @@ class TestGetJson(unittest.TestCase):
             mock_requests_get.reset_mock()
 
 
-# class TestMemoize(unittest.TestCase):
-#     """This is the memoize class' test cases
+class TestMemoize(unittest.TestCase):
+    """This is the memoize class' test cases
 
-#     Args:
-#         unittest.TestCase (class): This is the test case class
-#     """
+    Args:
+        unittest.TestCase (class): This is the test case class
+    """
 
-#     # @mock.patch('TestClass.a_method')
-#     def test_memoize(self, mock_method):
-#         """This is the memoize test function
-#         """
+    def test_memoize(self):
+        """This is the memoize test function
+        """
 
-#         class TestClass:
-#             """This is jus a test class
-#             """
+        class TestClass:
+            """This is jus a test class
+            """
 
-#             def a_method(self):
-#                 """the a_method of the inner class
-#                 """
-#                 return 42
+            def a_method(self):
+                """the a_method of the inner class
+                """
+                return 42
 
-#             pass
-#         pass
+            @memoize
+            def a_property(self):
+                return self.a_method()
+
+        with mock.patch.object(TestClass, 'a_method', return_value=42) as mock_method:
+            obj = TestClass()
+
+            res1 = obj.a_property
+            res2 = obj.a_property
+
+            self.assertEqual(res1, 42)
+            self.assertEqual(res2, 42)
+
+            mock_method.assert_called_once()
 
 
 if __name__ == "__main__":
