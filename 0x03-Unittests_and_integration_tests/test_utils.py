@@ -83,7 +83,7 @@ class TestMemoize(unittest.TestCase):
         unittest.TestCase (class): This is the test case class
     """
 
-    @parameterized([
+    @parameterized.expand([
         (42,)
     ])
     def test_memoize(self, return_value):

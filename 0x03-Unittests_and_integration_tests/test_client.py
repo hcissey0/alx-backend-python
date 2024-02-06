@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """This is the client test file"""
 
+from client import GithubOrgClient
 from parameterized import parameterized
 import unittest
 from unittest import mock
@@ -25,4 +26,8 @@ class TestGithubOrgClient(unittest.TestCase):
             org_name (str): The org name
             mock_get_json (mock.MagicMock): The mock of the get_json function
         """
-        pass
+        test_class = GithubOrgClient(org_name)
+        res = test_class.org
+        self.assertEqual(res, {"key": "value"})
+
+        mock_get_json.assert_called_once_with(f'https://api.github.com/orgs/{org_name}')
