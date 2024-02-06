@@ -78,10 +78,10 @@ class TestGithubOrgClient(unittest.TestCase):
 
 @parameterized_class([
     {
-        "org_payload": fixtures.org_payload,
-        "repos_payload": fixtures.repos_payload,
-        "expected_repos": fixtures.expected_repos,
-        "apache2_repos": fixtures.apache2_repos
+        "org_payload": fixtures.TEST_PAYLOAD[0][0],
+        "repos_payload": fixtures.TEST_PAYLOAD[0][1],
+        "expected_repos": fixtures.TEST_PAYLOAD[0][2],
+        "apache2_repos": fixtures.TEST_PAYLOAD[0][3]
     }
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
@@ -107,9 +107,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             Returns:
                 mock.Mock: The returned mock
             """
-            if url.endswith("/orgs/org_name"):
+            if url.endswith("/google"):
                 return mock.Mock(json=lambda: cls.org_payload)
-            elif url.endswith("/orgs/org_name/repos"):
+            elif url.endswith("/google/repos"):
                 return mock.Mock(json=lambda: cls.repos_payload)
             else:
                 return mock.Mock(json=lambda: {})
