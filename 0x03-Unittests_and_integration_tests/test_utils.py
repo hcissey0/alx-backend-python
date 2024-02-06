@@ -59,12 +59,11 @@ class TestGetJson(unittest.TestCase):
         unittest.TestCase (class): The unittest class
     """
 
-    @mock.patch('utils.requests.get')
-    def test_get_json(self, mock_requests_get: Any) -> None:
+    @mock.patch('requests.get')
+    def test_get_json(self, mock_requests_get: mock.MagicMock) -> None:
         """The test for the get json
 
         Args:
-            mock_json_loads (Callable): The mock json.loads()
             mock_requests_get (Callable): The mock requests.get()
         """
         test_input = [
@@ -73,13 +72,13 @@ class TestGetJson(unittest.TestCase):
         ]
 
         for test_url, test_payload in test_input:
-            mock_response = mock.Mock()
+            mock_response = mock_requests_get.return_value
             mock_response.json.return_value = test_payload
-            mock_requests_get.return_value = mock_response
 
             result = get_json(test_url)
 
             mock_requests_get.assert_called_once_with(test_url)
+            self.assertEqual(mock_requests_get.call_count, 1)
             mock_requests_get.call_count = 0
 
             self.assertEqual(result, test_payload)
@@ -96,3 +95,7 @@ class TestMemoize(unittest.TestCase):
         """This is the memoize test function
         """
         pass
+
+
+if __name__ == "__main__":
+    unittest.main()
