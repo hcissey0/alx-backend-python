@@ -72,29 +72,40 @@ class TestGetJson(unittest.TestCase):
         ]
 
         for test_url, test_payload in test_input:
-            mock_response = mock_requests_get.return_value
-            mock_response.json.return_value = test_payload
+            mock_requests_get.return_value = mock.Mock()
+            mock_requests_get.return_value.json.return_value = test_payload
 
             result = get_json(test_url)
 
             mock_requests_get.assert_called_once_with(test_url)
-            self.assertEqual(mock_requests_get.call_count, 1)
-            mock_requests_get.call_count = 0
 
             self.assertEqual(result, test_payload)
+            mock_requests_get.reset_mock()
 
 
-class TestMemoize(unittest.TestCase):
-    """This is the memoize class' test cases
+# class TestMemoize(unittest.TestCase):
+#     """This is the memoize class' test cases
 
-    Args:
-        unittest.TestCase (class): This is the test case class
-    """
+#     Args:
+#         unittest.TestCase (class): This is the test case class
+#     """
 
-    def test_memoize(self):
-        """This is the memoize test function
-        """
-        pass
+#     # @mock.patch('TestClass.a_method')
+#     def test_memoize(self, mock_method):
+#         """This is the memoize test function
+#         """
+
+#         class TestClass:
+#             """This is jus a test class
+#             """
+
+#             def a_method(self):
+#                 """the a_method of the inner class
+#                 """
+#                 return 42
+
+#             pass
+#         pass
 
 
 if __name__ == "__main__":
