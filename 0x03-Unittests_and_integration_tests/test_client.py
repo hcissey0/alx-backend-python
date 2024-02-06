@@ -2,7 +2,8 @@
 """This is the client test file"""
 
 from client import GithubOrgClient
-from parameterized import parameterized
+import fixtures
+from parameterized import parameterized, parameterized_class
 import unittest
 from unittest import mock
 
@@ -74,3 +75,55 @@ class TestGithubOrgClient(unittest.TestCase):
         """
         test_class = GithubOrgClient('org_name')
         self.assertEqual(test_class.has_license(repo, license_key), expected_output)
+
+@parameterized_class([
+    {
+        "org_payload": fixtures.org_payload,
+        "repos_payload": fixtures.repos_payload,
+        "expected_repos": fixtures.expected_repos,
+        "apache2_repos": fixtures.apache2_repos
+    }
+])
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """TestCase class for the public_repos
+
+    Args:
+        unittest (_type_): _description_
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        """Setting up the class
+        """
+        cls.get_patcher = mock.patch('requests.get')
+        cls.mock_get = cls.get_patcher.start()
+
+        def side_effect(url: str) -> mock.Mock:
+            """The side effect of the mocking
+
+            Args:
+                url (str): the url of the repo
+
+            Returns:
+                mock.Mock: The returned mock
+            """
+            if url.endswith("/orgs/org_name"):
+                return mock.Mock(json=lambda: cls.org_payload)
+            elif url.endswith("/orgs/org_name/repos"):
+                return mock.Mock(json=lambda: cls.repos_payload)
+            else:
+                return mock.Mock(json=lambda: {})
+
+        cls.mock_get.side_effect = side_effect
+
+    @classmethod
+    def tearDownClass(cls):
+        """The teardown function of the test class
+        """
+        cls.get_patcher.stop()
+
+    def test_public_repos(self):
+        """This is a tester for the public_repos function
+        """
+        test_class = GithubOrgClient('org_name')
+        self.assertEqual(test_class.public_repos(), self.expected_repos)
