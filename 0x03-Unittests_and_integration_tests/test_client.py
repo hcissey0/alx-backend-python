@@ -76,6 +76,7 @@ class TestGithubOrgClient(unittest.TestCase):
         test_class = GithubOrgClient('org_name')
         self.assertEqual(test_class.has_license(repo, license_key), expected_output)
 
+
 @parameterized_class([
     {
         "org_payload": fixtures.TEST_PAYLOAD[0][0],
@@ -95,8 +96,6 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
     def setUpClass(cls):
         """Setting up the class
         """
-        cls.get_patcher = mock.patch('requests.get')
-        cls.mock_get = cls.get_patcher.start()
 
         def side_effect(url: str) -> mock.Mock:
             """The side effect of the mocking
@@ -113,8 +112,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
                 return mock.Mock(json=lambda: cls.repos_payload)
             else:
                 return mock.Mock(json=lambda: {})
+        cls.get_patcher = mock.patch('requests.get', side_effect=side_effect)
 
-        cls.mock_get.side_effect = side_effect
+        cls.get_patcher.start()
 
     @classmethod
     def tearDownClass(cls):
