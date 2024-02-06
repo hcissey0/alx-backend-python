@@ -4,6 +4,7 @@
 from client import GithubOrgClient
 import fixtures
 from parameterized import parameterized, parameterized_class
+from requests import HTTPError
 import unittest
 from unittest import mock
 
@@ -106,12 +107,19 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
             Returns:
                 mock.Mock: The returned mock
             """
-            if url.endswith("/google"):
-                return mock.Mock(json=lambda: cls.org_payload)
-            elif url.endswith("/google/repos"):
-                return mock.Mock(json=lambda: cls.repos_payload)
-            else:
-                return mock.Mock(json=lambda: {})
+            payloads = {
+                'https://api.github.com/orgs/google': cls.org_payload,
+                'https://api.github.com/orgs/google/repos': cls.repos_payload
+            }
+            if url in payloads:
+                return mock.Mock(**{'json.return_value': payloads[url]})
+            return HTTPError
+            # if url.endswith("/google"):
+            #     return mock.Mock(json=lambda: cls.org_payload)
+            # elif url.endswith("/google/repos"):
+            #     return mock.Mock(json=lambda: cls.repos_payload)
+            # else:
+            #     return mock.Mock(json=lambda: {})
         cls.get_patcher = mock.patch('requests.get', side_effect=side_effect)
 
         cls.get_patcher.start()
