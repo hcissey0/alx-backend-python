@@ -59,27 +59,21 @@ class TestGetJson(unittest.TestCase):
         unittest.TestCase (class): The unittest class
     """
 
+    @parameterized.expand([
+        ('http://example.com', {"payload": True}),
+        ('http://holberton.io', {'payload': False})
+    ])
     @mock.patch('requests.get')
-    def test_get_json(self, mock_requests_get: mock.MagicMock) -> None:
+    def test_get_json(self, test_url, test_payload, mock_requests_get: mock.MagicMock) -> None:
         """The test for the get json
 
         Args:
             mock_requests_get (Callable): The mock requests.get()
         """
-        test_input = [
-            ("http://example.com", {"payload": True}),
-            ("http://holberton.io", {"payload": False})
-        ]
-
-        for test_url, test_payload in test_input:
-            mock_requests_get.return_value.json.return_value = test_payload
-
-            result = get_json(test_url)
-
-            mock_requests_get.assert_called_once_with(test_url)
-
-            self.assertEqual(result, test_payload)
-            mock_requests_get.reset_mock()
+        mock_requests_get.return_value.json.return_value = test_payload
+        res = get_json(test_url)
+        mock_requests_get.assert_called_once_with(test_url)
+        self.assertEqual(res, test_payload)
 
 
 class TestMemoize(unittest.TestCase):
